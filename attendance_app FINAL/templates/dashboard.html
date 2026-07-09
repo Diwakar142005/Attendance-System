@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Attendance Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 2rem 1rem; }
+    .container { max-width: 800px; margin: auto; }
+    h1 { font-size: 1.25rem; font-weight: 600; margin-bottom: 4px; }
+    .subtitle { font-size: 0.875rem; color: #6b7280; margin-bottom: 1.25rem; }
+
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+    .stat { padding: 1rem; border-radius: 10px; display: flex; align-items: center; gap: 12px; color: white; }
+    .stat-icon { width: 40px; height: 40px; border-radius: 8px; background: rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .stat-icon i { font-size: 20px; color: #fff; }
+    .stat-label { font-size: 0.75rem; margin-bottom: 4px; }
+    .stat-val { font-size: 1.5rem; font-weight: 600; }
+
+    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+
+    .section-title { font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 12px; }
+
+    label { font-size: 0.8125rem; font-weight: 500; color: #374151; display: block; margin-bottom: 4px; }
+
+    input { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.875rem; margin-bottom: 10px; }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .btn-primary { width: 100%; padding: 10px; background: #534AB7; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 0.875rem; margin-top: 4px; }
+
+    .btn-green { padding: 9px 18px; background: #1D9E75; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 0.875rem; }
+
+    .inline { display: flex; gap: 8px; align-items: flex-end; }
+    .inline input { margin-bottom: 0; flex: 1; }
+
+    .pw-field { position: relative; margin-bottom: 10px; }
+    .pw-field input { width: 100%; padding: 8px 38px 8px 12px; margin-bottom: 0; }
+    .pw-field input:focus { outline: none; border-color: #534AB7; }
+    .pw-toggle { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 17px; display: flex; align-items: center; padding: 0; line-height: 1; }
+    .pw-toggle:hover { color: #534AB7; }
+
+    .menu-list { display: flex; flex-direction: column; width: 100%; margin-bottom: 1rem; border-radius: 10px; overflow: hidden; border: 0.5px solid #e5e5e5; }
+    .menu-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #ffffff; border-bottom: 0.5px solid #e5e5e5; text-decoration: none; cursor: pointer; transition: background 0.12s; }
+    .menu-item:last-child { border-bottom: none; }
+    .menu-item:hover { background: #f5f5f5; }
+    .icon-wrap { width: 36px; height: 36px; border-radius: 8px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .icon-wrap i { font-size: 18px; color: #666; }
+    .menu-text { flex: 1; }
+    .menu-title { font-size: 14px; font-weight: 500; color: #111; margin: 0; }
+    .menu-sub { font-size: 12px; color: #888; margin: 2px 0 0; }
+    .chevron { color: #bbb; font-size: 16px; }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+    <div>
+      <h1>Attendance Dashboard</h1>
+      {% if admin_name %}
+<p style="margin-top:8px;color:#534AB7;font-weight:bold;">
+    Admin: {{ admin_name }}
+</p>
+{% endif %}
+      {% if session.get("teacher") %}
+      <p style="margin-top:8px; color:#534AB7; font-weight:bold; font-size:14px;">
+        Teacher: {{ teacher_name }}
+      </p>
+      <p style="font-size:14px; color:#666;">
+        Branch: {{ teacher_branch }} | Year: {{ teacher_year }}
+      </p>
+      {% endif %}
+      <p class="subtitle">Manage students and mark attendance</p>
+    </div>
+    <a href="/logout" style="display:inline-flex; align-items:center; gap:6px; font-size:13px; color:#534AB7; border:1px solid #CECBF6; border-radius:8px; padding:7px 14px; background:none; text-decoration:none; font-family:Arial,sans-serif; transition:background 0.12s;"
+   onmouseover="this.style.background='#EEEDFE'" onmouseout="this.style.background='none'">
+  <i class="ti ti-logout" style="font-size:16px;"></i>
+  Logout
+</a>
+  </div>
+
+  <div class="stats">
+    <div class="stat" style="background:#4f46e5;">
+      <div class="stat-icon"><i class="ti ti-users"></i></div>
+      <div>
+        <div class="stat-label">Total Students</div>
+        <div class="stat-val">{{ total_students }}</div>
+      </div>
+    </div>
+    <div class="stat" style="background:#16a34a;">
+      <div class="stat-icon"><i class="ti ti-user-check"></i></div>
+      <div>
+        <div class="stat-label">Present Today</div>
+        <div class="stat-val">{{ present_today }}</div>
+        <small>{{ today }}</small>
+      </div>
+    </div>
+    <div class="stat" style="background:#dc2626;">
+      <div class="stat-icon"><i class="ti ti-user-x"></i></div>
+      <div>
+        <div class="stat-label">Absent Today</div>
+        <div class="stat-val">{{ absent_today }}</div>
+      </div>
+    </div>
+    <div class="stat" style="background:#f59e0b;">
+      <div class="stat-icon"><i class="ti ti-inbox"></i></div>
+      <div>
+        <div class="stat-label">Pending Requests</div>
+        <div class="stat-val">{{ pending_requests }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Add Student</div>
+    <form action="/add" method="post">
+      <div class="grid2">
+        <div>
+          <label>Roll Number</label>
+          <input name="roll">
+        </div>
+        <div>
+          <label>Full Name</label>
+          <input name="name">
+        </div>
+        <div>
+          <label>Branch</label>
+          <input name="branch">
+        </div>
+        <div>
+          <label>Year</label>
+          <input name="year">
+        </div>
+      </div>
+      <label>Password</label>
+      <div class="pw-field">
+        <input type="password" id="password" name="password">
+        <button type="button" class="pw-toggle" onclick="var x=document.getElementById('password');x.type=x.type=='password'?'text':'password';this.querySelector('i').className=x.type=='text'?'ti ti-eye-off':'ti ti-eye'">
+          <i class="ti ti-eye"></i>
+        </button>
+      </div>
+      <button class="btn-primary">Add Student</button>
+    </form>
+  </div>
+
+  {% if session.get("admin_id") %}
+  <div class="card">
+    <div class="section-title">Add Teacher</div>
+    <form action="/add_teacher" method="post">
+      <label>Teacher Username</label>
+      <input name="username" required>
+      <label>Branch</label>
+      <input name="branch" required>
+      <label>Year</label>
+      <input name="year" required>
+      <label>Temporary Password</label>
+      <div class="pw-field">
+        <input type="password" id="teacher_password" name="password" required>
+        <button type="button" class="pw-toggle" onclick="var x=document.getElementById('teacher_password');x.type=x.type=='password'?'text':'password';this.querySelector('i').className=x.type=='text'?'ti ti-eye-off':'ti ti-eye'">
+          <i class="ti ti-eye"></i>
+        </button>
+      </div>
+      <button class="btn-primary">Add Teacher</button>
+    </form>
+  </div>
+  {% endif %}
+
+  {% if session.get("teacher") %}
+  <div class="card">
+    <div class="section-title">Mark Attendance</div>
+    <form action="/mark" method="post">
+      <div class="inline">
+        <div style="flex:1">
+          <label>Roll Number</label>
+          <input name="roll">
+        </div>
+        <button class="btn-green">Mark Present</button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  <div class="menu-list">
+    {% if session.get("teacher") %}
+    <a href="/requests" class="menu-item">
+      <div class="icon-wrap"><i class="ti ti-inbox"></i></div>
+      <div class="menu-text">
+        <p class="menu-title">View Requests</p>
+        <p class="menu-sub">Student attendance requests</p>
+      </div>
+      <i class="ti ti-chevron-right chevron"></i>
+    </a>
+    {% endif %}
+    <a href="/attendance" class="menu-item">
+      <div class="icon-wrap"><i class="ti ti-calendar-check"></i></div>
+      <div class="menu-text">
+        <p class="menu-title">View Attendance</p>
+        <p class="menu-sub">Full attendance records</p>
+      </div>
+      <i class="ti ti-chevron-right chevron"></i>
+    </a>
+   {% if session.get("admin_id") %}
+    <a href="/teachers" class="menu-item">
+      <div class="icon-wrap"><i class="ti ti-user-star"></i></div>
+      <div class="menu-text">
+        <p class="menu-title">View Teachers</p>
+        <p class="menu-sub">All teacher accounts</p>
+      </div>
+      <i class="ti ti-chevron-right chevron"></i>
+    </a>
+    {% endif %}
+    <a href="/students" class="menu-item">
+      <div class="icon-wrap"><i class="ti ti-users"></i></div>
+      <div class="menu-text">
+        <p class="menu-title">View Students</p>
+        <p class="menu-sub">All enrolled students</p>
+      </div>
+      <i class="ti ti-chevron-right chevron"></i>
+    </a>
+    <a href="/messages" class="menu-item">
+      <div class="icon-wrap"><i class="ti ti-message-circle"></i></div>
+      <div class="menu-text">
+        <p class="menu-title">Student Messages</p>
+        <p class="menu-sub">Messages sent by students</p>
+      </div>
+      <i class="ti ti-chevron-right chevron"></i>
+    </a>
+    {% if session.get("teacher") %}
+    <a href="/auto_absent" class="menu-item">
+      <div class="icon-wrap"><i class="ti ti-user-off"></i></div>
+      <div class="menu-text">
+        <p class="menu-title">Mark Absents</p>
+        <p class="menu-sub">Auto-mark remaining as absent</p>
+      </div>
+      <i class="ti ti-chevron-right chevron"></i>
+    </a>
+    {% endif %}
+    <a href="/notice_board" class="menu-item">
+      <div class="icon-wrap"><i class="ti ti-speakerphone"></i></div>
+      <div class="menu-text">
+        <p class="menu-title">Notice Board</p>
+        <p class="menu-sub">Announcements and notices</p>
+      </div>
+      <i class="ti ti-chevron-right chevron"></i>
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Attendance Overview Chart</div>
+    <canvas id="attendanceChart"></canvas>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('attendanceChart');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['Total Students', 'Present Today'],
+    datasets: [{
+      label: 'Attendance Overview',
+      data: [{{ total_students }}, {{ present_today }}],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: { y: { beginAtZero: true } }
+  }
+});
+</script>
+
+</body>
+</html>

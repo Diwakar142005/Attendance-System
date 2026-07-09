@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Messages</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #F8F9FB; min-height: 100vh; padding: 2rem 1.25rem; color: #1a1a1a; }
+    .wrap { max-width: 680px; margin: auto; }
+
+    /* Topbar */
+    .topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .topbar-title { font-size: 15px; font-weight: 600; color: #1a1a1a; display: flex; align-items: center; gap: 8px; }
+    .topbar-sub { font-size: 12px; color: #6B7280; margin-top: 3px; }
+    .count-pill { font-size: 11px; font-weight: 500; background: #F3F4F6; color: #6B7280; border: 1px solid #E4E7ED; border-radius: 99px; padding: 2px 10px; }
+
+    /* Search */
+    .search-wrap { position: relative; display: flex; align-items: center; }
+    .search-icon { position: absolute; left: 10px; color: #9CA3AF; pointer-events: none; font-size: 15px; }
+    .search-bar { font-family: 'DM Sans', sans-serif; font-size: 13px; color: #1a1a1a; background: #fff; border: 1px solid #E4E7ED; border-radius: 7px; padding: 7px 12px 7px 32px; width: 200px; outline: none; transition: border-color .12s; }
+    .search-bar:focus { border-color: #A0A9B8; }
+
+    /* Message cards */
+    .msg-list { display: flex; flex-direction: column; gap: 10px; }
+    .msg-card { background: #fff; border: 1px solid #E4E7ED; border-radius: 10px; padding: 14px 16px; }
+    .msg-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .roll-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 500; color: #374151; background: #F3F4F6; border: 1px solid #E4E7ED; border-radius: 6px; padding: 3px 9px; font-family: 'DM Mono', monospace; }
+    .roll-badge i { font-size: 13px; color: #6B7280; }
+    .msg-date { font-size: 11.5px; color: #9CA3AF; font-family: 'DM Mono', monospace; }
+    .msg-text { font-size: 13.5px; color: #374151; line-height: 1.6; }
+
+    /* Empty state */
+    .empty-state { text-align: center; padding: 3rem 1rem; color: #9CA3AF; background: #fff; border: 1px solid #E4E7ED; border-radius: 10px; }
+    .empty-state i { font-size: 28px; margin-bottom: 8px; display: block; opacity: .4; }
+    .empty-state p { font-size: 13px; }
+
+    /* Back link */
+    .back-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 1rem; font-size: 13px; font-weight: 500; color: #374151; text-decoration: none; border: 1px solid #E4E7ED; border-radius: 7px; padding: 7px 14px; background: #fff; transition: background .12s; }
+    .back-link:hover { background: #F3F4F6; }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">
+        <i class="ti ti-messages"></i>
+        Student Messages
+        <span class="count-pill" id="count">{{ data|length }} messages</span>
+      </div>
+      <div class="topbar-sub">Messages sent by students</div>
+    </div>
+    <div class="search-wrap">
+      <i class="ti ti-search search-icon"></i>
+      <input class="search-bar" type="search" placeholder="Search roll or message…" oninput="filterCards(this.value)" aria-label="Search messages"/>
+    </div>
+  </div>
+
+  <!-- Message Cards -->
+  <div class="msg-list" id="msg-list">
+    {% for m in data %}
+    <div class="msg-card" data-row="{{ m[1] }}|{{ m[2]|lower }}|{{ m[3] }}">
+      <div class="msg-card-top">
+        <span class="roll-badge"><i class="ti ti-user"></i> {{ m[1] }}</span>
+        <span class="msg-date">{{ m[3] }}</span>
+      </div>
+      <div class="msg-text">{{ m[2] }}</div>
+    </div>
+    {% endfor %}
+
+    {% if data|length == 0 %}
+    <div class="empty-state">
+      <i class="ti ti-messages-off"></i>
+      <p>No messages yet.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <a class="back-link" href="/dashboard">
+    <i class="ti ti-arrow-left"></i> Back to dashboard
+  </a>
+
+</div>
+<script>
+function filterCards(q) {
+  q = q.toLowerCase().trim();
+  var cards = document.querySelectorAll('#msg-list .msg-card');
+  var visible = 0;
+  cards.forEach(function(c) {
+    var match = !q || c.dataset.row.toLowerCase().includes(q);
+    c.classList.toggle('hidden', !match);
+    if (match) visible++;
+  });
+  document.getElementById('count').textContent = visible + ' message' + (visible !== 1 ? 's' : '');
+}
+</script>
+</body>
+</html>

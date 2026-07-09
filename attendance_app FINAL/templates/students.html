@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Students</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 2rem 1rem; }
+    .container { max-width: 680px; margin: auto; }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+    h1 { font-size: 1.25rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .count-pill { font-size: 0.75rem; font-weight: 500; background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; border-radius: 99px; padding: 2px 10px; }
+    .subtitle { font-size: 0.8125rem; color: #6b7280; margin-top: 3px; }
+    .search-bar { padding: 7px 12px; font-size: 0.8125rem; border: 1px solid #d1d5db; border-radius: 8px; width: 200px; }
+    .tbl-wrap { border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; background: #fff; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+    th { padding: 10px 14px; text-align: left; font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+    td { padding: 11px 14px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #f9fafb; }
+    .roll { color: #9ca3af; font-size: 0.75rem; }
+    .name-cell { display: flex; align-items: center; gap: 9px; }
+    .avatar { width: 30px; height: 30px; border-radius: 50%; background: #EEEDFE; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: #534AB7; flex-shrink: 0; }
+    .branch-badge { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: 0.6875rem; font-weight: 500; background: #EEEDFE; color: #3C3489; }
+    .year-badge { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: 0.6875rem; font-weight: 500; background: #E1F5EE; color: #0F6E56; }
+    .delete-btn { background:red;color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer; }
+    .delete-btn:hover { background:#dc2626; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 1rem; font-size: 0.8125rem; color: #374151; text-decoration: none; border: 1px solid #d1d5db; border-radius: 8px; padding: 6px 14px; background: #fff; }
+    .back-link:hover { background: #f9fafb; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div>
+      <h1>Students <span class="count-pill" id="count">{{ data|length }}</span></h1>
+      <p class="subtitle">All enrolled students</p>
+    </div>
+    <input class="search-bar" placeholder="Search name, roll, branch…" oninput="filterTable(this.value)" />
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Roll</th>
+          <th>Name</th>
+          <th>Branch</th>
+          <th>Year</th>
+          <th>Action</th> <!-- ✅ NEW COLUMN -->
+        </tr>
+      </thead>
+      <tbody id="stu-body">
+        {% for s in data %}
+{% set initials = "ST" %}        <tr data-row="{{ s[0] }}|{{ s[1]|lower }}|{{ s[2]|lower }}|{{ s[3] }}">
+          
+          <td class="roll">{{ s[0] }}</td>
+
+          <td>
+            <div class="name-cell">
+              <div class="avatar">{{ initials }}</div>
+              {{ s[1] }}
+            </div>
+          </td>
+
+          <td><span class="branch-badge">{{ s[2] }}</span></td>
+          <td><span class="year-badge">Year {{ s[3] }}</span></td>
+
+          <!-- ✅ DELETE BUTTON WITH CONFIRM -->
+          <td>
+    <form action="{{ url_for('delete_student', roll=s[0]) }}"
+          method="post"
+          onsubmit="return confirm('⚠️ Are you sure you want to delete this student?');">
+
+        <button type="submit" class="delete-btn">
+            Delete
+        </button>
+
+    </form>
+</td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <a class="back-link" href="/dashboard">&#8592; Back to dashboard</a>
+
+</div>
+
+<script>
+  function filterTable(q) {
+    q = q.toLowerCase();
+    var rows = document.querySelectorAll('#stu-body tr');
+    var visible = 0;
+    rows.forEach(function(row) {
+      var match = row.dataset.row.includes(q);
+      row.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    document.getElementById('count').textContent = visible;
+  }
+</script>
+
+</body>
+</html>

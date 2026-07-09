@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #F8F9FB; min-height: 100vh; padding: 2rem 1.5rem; color: #1a1a1a; }
+
+    .dashboard { max-width: 700px; margin: auto; }
+
+    .header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 1.25rem; border-bottom: 1px solid #E4E7ED; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px; }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .avatar { width: 42px; height: 42px; border-radius: 50%; background: #EDEDF0; border: 1px solid #D8DBE2; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 500; color: #1a1a1a; flex-shrink: 0; }
+    .header-title { font-size: 15px; font-weight: 600; color: #1a1a1a; }
+    .header-sub { font-size: 12px; color: #6B7280; margin-top: 2px; }
+    .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; padding: 7px 13px; border-radius: 7px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 500; border: 1px solid #D1D5DB; background: #fff; color: #1a1a1a; text-decoration: none; transition: background .12s; }
+    .btn:hover { background: #F3F4F6; }
+    .btn-logout { color: #B91C1C; border-color: #FECACA; background: #FFF5F5; }
+    .btn-logout:hover { background: #FEE2E2; }
+
+    .notices-section { margin-bottom: 1.5rem; }
+    .notices-heading { font-size: 13px; font-weight: 600; color: #1a1a1a; display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+    .notice-card { background: #fff; border: 1px solid #E4E7ED; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
+    .notice-card img { width: 100%; max-height: 300px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; display: block; }
+    .notice-title { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+    .notice-body { font-size: 13px; color: #374151; line-height: 1.55; margin-bottom: 8px; }
+    .notice-date { font-size: 11.5px; color: #9CA3AF; }
+
+    .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+    .info-card { background: #F3F4F6; border-radius: 8px; padding: 12px 14px; }
+    .info-label { font-size: 11px; color: #6B7280; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; text-transform: uppercase; letter-spacing: .04em; }
+    .info-value { font-size: 18px; font-weight: 600; color: #1a1a1a; font-family: 'DM Mono', monospace; }
+    .info-value.text-val { font-size: 13.5px; font-family: 'DM Sans', sans-serif; }
+
+    .summary-bar { display: flex; align-items: center; gap: 14px; padding: 10px 14px; background: #F3F4F6; border-radius: 8px; margin-bottom: 1.25rem; font-size: 13px; flex-wrap: wrap; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+    .dot-present { background: #16A34A; }
+    .dot-absent { background: #DC2626; }
+    .sum-item { display: flex; align-items: center; gap: 4px; color: #6B7280; }
+    .sum-item b { color: #1a1a1a; font-weight: 600; }
+    .sum-div { width: 1px; height: 14px; background: #D1D5DB; }
+    .pct-text { margin-left: auto; font-size: 12.5px; color: #6B7280; }
+    .pct-text b { color: #1a1a1a; font-weight: 600; }
+
+    .card { background: #fff; border: 1px solid #E4E7ED; border-radius: 10px; overflow: hidden; margin-bottom: 1.25rem; }
+    .card-header { padding: 11px 16px; border-bottom: 1px solid #F0F1F4; display: flex; align-items: center; justify-content: space-between; }
+    .card-title { font-size: 13px; font-weight: 600; color: #1a1a1a; display: flex; align-items: center; gap: 7px; }
+    .record-pill { font-size: 11px; color: #6B7280; background: #F3F4F6; border-radius: 20px; padding: 2px 9px; border: 1px solid #E4E7ED; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead tr { background: #F8F9FB; }
+    th { padding: 8px 16px; text-align: left; font-weight: 500; color: #6B7280; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+    tbody tr { border-top: 1px solid #F0F1F4; }
+    tbody tr:hover { background: #FAFAFA; }
+    td { padding: 9px 16px; color: #1a1a1a; }
+    td.date-col { font-family: 'DM Mono', monospace; font-size: 12px; color: #6B7280; }
+
+    .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 500; padding: 2px 9px; border-radius: 20px; }
+    .badge-present { background: #F0FDF4; color: #15803D; }
+    .badge-absent { background: #FEF2F2; color: #B91C1C; }
+
+    .empty-state { text-align: center; padding: 2.5rem 1rem; color: #9CA3AF; }
+    .empty-state i { font-size: 28px; margin-bottom: 8px; display: block; opacity: .4; }
+    .empty-state p { font-size: 13px; }
+
+    .msg-body { padding: 14px 16px; }
+    .msg-body textarea { width: 100%; min-height: 90px; resize: vertical; font-size: 13px; font-family: 'DM Sans', sans-serif; background: #F8F9FB; border: 1px solid #E4E7ED; border-radius: 7px; padding: 10px 12px; color: #1a1a1a; outline: none; transition: border .12s; }
+    .msg-body textarea:focus { border-color: #A0A9B8; }
+    .msg-footer { display: flex; justify-content: flex-end; margin-top: 10px; }
+
+    /* Password input wrapper */
+    .pw-wrap { position: relative; margin-bottom: 10px; }
+    .pw-wrap input { width: 100%; padding: 10px 40px 10px 10px; border: 1px solid #E4E7ED; border-radius: 8px; font-size: 13px; font-family: 'DM Sans', sans-serif; background: #F8F9FB; color: #1a1a1a; outline: none; transition: border .12s; }
+    .pw-wrap input:focus { border-color: #A0A9B8; }
+    .pw-toggle { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 0; color: #9CA3AF; display: flex; align-items: center; font-size: 16px; }
+    .pw-toggle:hover { color: #6B7280; }
+
+    @media(max-width: 500px) {
+      .info-grid { grid-template-columns: 1fr 1fr; }
+      .header { flex-direction: column; align-items: flex-start; }
+      .header-actions { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="dashboard">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="avatar">{{ student[1][0] }}</div>
+      <div>
+        <div class="header-title">Welcome, {{ student[1] }}</div>
+        <div class="header-sub">Student Dashboard</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <form action="/send_request" method="post" style="margin:0">
+        <button type="submit" class="btn">
+          <i class="ti ti-send"></i> Send Attendance Request
+        </button>
+      </form>
+      <a href="/student_logout" class="btn btn-logout">
+        <i class="ti ti-logout"></i> Logout
+      </a>
+    </div>
+  </div>
+
+  <!-- Info Cards -->
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-label"><i class="ti ti-id-badge"></i> Roll No.</div>
+      <div class="info-value">{{ student[0] }}</div>
+    </div>
+    <div class="info-card">
+      <div class="info-label"><i class="ti ti-building"></i> Branch</div>
+      <div class="info-value text-val">{{ student[2] }}</div>
+    </div>
+    <div class="info-card">
+      <div class="info-label"><i class="ti ti-calendar"></i> Year</div>
+      <div class="info-value">{{ student[3] }}</div>
+    </div>
+  </div>
+
+  <!-- Notices -->
+  {% if notices %}
+  <div class="notices-section">
+    <div class="notices-heading">
+      <i class="ti ti-speakerphone"></i> Latest Notices
+    </div>
+    {% for n in notices %}
+    <div class="notice-card">
+      {% if n[3] %}
+      <img src="{{ url_for('notice_image', filename=n[3]) }}" alt="Notice image">
+      {% endif %}
+      <div class="notice-title">{{ n[1] }}</div>
+      <div class="notice-body">{{ n[2] }}</div>
+      <div class="notice-date">{{ n[4] }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Summary Bar -->
+  {% if attendance %}
+  <div class="summary-bar">
+    <span class="sum-item">
+      <span class="dot dot-present"></span>
+      Present <b>{{ attendance | selectattr('3', 'equalto', 'Present') | list | length }}</b>
+    </span>
+    <div class="sum-div"></div>
+    <span class="sum-item">
+      <span class="dot dot-absent"></span>
+      Absent <b>{{ attendance | rejectattr('3', 'equalto', 'Present') | list | length }}</b>
+    </span>
+    <span class="pct-text">
+      Attendance: <b>{{ ((attendance | selectattr('3', 'equalto', 'Present') | list | length) / (attendance | length) * 100) | round(1) }}%</b>
+    </span>
+  </div>
+  {% endif %}
+
+  <!-- Attendance Table -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><i class="ti ti-clipboard-list"></i> Attendance Records</div>
+      <span class="record-pill">{{ attendance|length }} records</span>
+    </div>
+    {% if attendance %}
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        {% for a in attendance %}
+        <tr>
+          <td class="date-col">{{ a[2] }}</td>
+          <td>
+            {% if a[3]|lower == 'present' %}
+              <span class="badge badge-present"><i class="ti ti-circle-check"></i> Present</span>
+            {% else %}
+              <span class="badge badge-absent"><i class="ti ti-circle-x"></i> Absent</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <i class="ti ti-calendar-off"></i>
+      <p>No attendance records found.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Message Teacher -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><i class="ti ti-message"></i> Message Teacher</div>
+    </div>
+    <div class="msg-body">
+      <form action="/send_message" method="post">
+        <textarea name="message" rows="4" placeholder="Write your message here..." required></textarea>
+        <div class="msg-footer">
+          <button type="submit" class="btn">
+            <i class="ti ti-send"></i> Send Message
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Change Password -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="ti ti-lock"></i> Change Password
+      </div>
+    </div>
+    <div class="msg-body">
+      <form action="/change_password" method="post">
+
+        <div class="pw-wrap">
+          <input type="password" id="current_password" name="current_password" placeholder="Current Password" required>
+          <button type="button" class="pw-toggle" onclick="togglePw('current_password', 'eye1')" aria-label="Toggle password visibility">
+            <i class="ti ti-eye" id="eye1"></i>
+          </button>
+        </div>
+
+        <div class="pw-wrap">
+          <input type="password" id="new_password" name="new_password" placeholder="New Password" required>
+          <button type="button" class="pw-toggle" onclick="togglePw('new_password', 'eye2')" aria-label="Toggle password visibility">
+            <i class="ti ti-eye" id="eye2"></i>
+          </button>
+        </div>
+
+        <div class="msg-footer">
+          <button type="submit" class="btn">
+            <i class="ti ti-key"></i> Update Password
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function togglePw(inputId, iconId) {
+  var input = document.getElementById(inputId);
+  var icon = document.getElementById(iconId);
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'ti ti-eye-off';
+  } else {
+    input.type = 'password';
+    icon.className = 'ti ti-eye';
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+</head>
+<body>
+
+<form method="post" style="max-width:380px; margin:auto; padding:2rem; border:1px solid #e5e7eb; border-radius:12px; font-family:sans-serif;">
+
+  <div style="text-align:center; margin-bottom:1.5rem;">
+    <h2 style="margin:0 0 4px; font-size:1.25rem;">Welcome back</h2>
+    <p style="margin:0; color:#6b7280; font-size:0.875rem;">Sign in to your account</p>
+  </div>
+
+  <div style="margin-bottom:1rem;">
+    <label style="display:block; font-size:0.8125rem; font-weight:500; margin-bottom:5px;">Username</label>
+    <input name="username" placeholder="Enter your username"
+      style="width:100%; box-sizing:border-box; padding:8px 12px; border:1px solid #d1d5db; border-radius:8px; font-size:0.875rem;">
+  </div>
+
+  <div style="margin-bottom:1rem;">
+    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+      <label style="font-size:0.8125rem; font-weight:500;">Password</label>
+      <a href="#" style="font-size:0.75rem; color:#534AB7; text-decoration:none;">Forgot password?</a>
+    </div>
+    <div style="display:flex; align-items:center; position:relative;">
+      <input id="login_password" name="password" type="password"
+        placeholder="Enter your password"
+        style="width:100%; box-sizing:border-box; padding:8px 36px 8px 12px; border:1px solid #d1d5db; border-radius:8px; font-size:0.875rem;">
+      <button type="button" onclick="toggleLoginPassword()"
+        style="position:absolute; right:10px; background:none; border:none; cursor:pointer; padding:0; color:#888; font-size:16px; display:flex; align-items:center;">
+        <i id="eyeIcon" class="ti ti-eye"></i>
+      </button>
+    </div>
+  </div>
+
+  <label style="display:flex; align-items:center; gap:8px; font-size:0.8125rem; color:#6b7280; margin-bottom:1.25rem; cursor:pointer;">
+    <input type="checkbox"> Remember me for 30 days
+  </label>
+
+  <button style="width:100%; padding:10px; background:#534AB7; color:#fff; border:none; border-radius:8px; font-size:0.875rem; font-weight:500; cursor:pointer; margin-bottom:0.75rem;">
+    Sign in
+  </button>
+
+  <a href="/student_login" style="display:block; text-decoration:none;">
+    <button type="button" style="width:100%; padding:10px; background:transparent; color:#534AB7; border:1.5px solid #534AB7; border-radius:8px; font-size:0.875rem; font-weight:500; cursor:pointer;">
+      Student login
+    </button>
+  </a>
+
+  <p style="text-align:center; font-size:0.8125rem; color:#6b7280; margin-top:1rem;">
+    Don't have an account?
+    <a href="/register_admin" style="color:#534AB7; font-weight:500; text-decoration:none;">Sign up</a>
+  </p>
+
+</form>
+
+<script>
+function toggleLoginPassword() {
+  var x = document.getElementById("login_password");
+  var icon = document.getElementById("eyeIcon");
+  if (x.type === "password") {
+    x.type = "text";
+    icon.className = "ti ti-eye-off";
+  } else {
+    x.type = "password";
+    icon.className = "ti ti-eye";
+  }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notice Board</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 2rem 1rem;
+            color: #111;
+        }
+
+        .container { max-width: 700px; margin: auto; }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        h1 { font-size: 1.25rem; font-weight: 600; margin-bottom: 4px; }
+
+        .subtitle { font-size: .875rem; color: #6b7280; margin-bottom: 1.25rem; }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: .75rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        label {
+            font-size: .8125rem;
+            font-weight: 500;
+            color: #374151;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: .875rem;
+            margin-bottom: 10px;
+            font-family: Arial, sans-serif;
+            resize: vertical;
+        }
+
+        textarea { min-height: 90px; }
+
+        .btn-primary {
+            width: 100%;
+            padding: 10px;
+            background: #534AB7;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: .875rem;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover { background: #3C3489; }
+
+        .upload-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .upload-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f5f5f5;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 7px 14px;
+            font-size: 13px;
+            color: #6b7280;
+            cursor: pointer;
+        }
+
+        .upload-label:hover { background: #e5e7eb; }
+        .upload-hint { font-size: 12px; color: #9ca3af; }
+
+        .notices { display: flex; flex-direction: column; gap: 14px; }
+
+        .menu-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 16px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            transition: background .12s;
+        }
+
+        .menu-item:hover { background: #f9f8ff; }
+
+        .icon-wrap {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notice-meta { flex: 1; }
+
+        .notice-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111;
+            margin: 0 0 4px;
+        }
+
+        .notice-msg {
+            font-size: 13px;
+            color: #6b7280;
+            margin: 0 0 8px;
+            line-height: 1.5;
+        }
+
+        .notice-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .notice-tag {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: 20px;
+            background: #EEEDFE;
+            color: #3C3489;
+            border: 0.5px solid #AFA9EC;
+        }
+
+        .notice-date {
+            font-size: 12px;
+            color: #9ca3af;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-delete {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: 1px solid #fca5a5;
+            border-radius: 8px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #A32D2D;
+            transition: background .12s;
+        }
+
+        .btn-delete:hover { background: #FCEBEB; }
+
+        .notice-img {
+            width: 100%;
+            display: block;
+            border-radius: 8px;
+            max-height: 180px;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .header-count {
+            font-size: 13px;
+            color: #6b7280;
+            background: #e5e7eb;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 1.5rem;
+            font-size: 13px;
+            color: #534AB7;
+            border: 1px solid #CECBF6;
+            border-radius: 8px;
+            padding: 6px 12px;
+            background: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .back-btn:hover { background: #EEEDFE; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h1>
+                <i class="ti ti-speakerphone" style="font-size:22px; vertical-align:-3px; color:#534AB7;"></i>
+                Notice Board &nbsp;<span class="header-count">{{ data|length }} notice{{ 's' if data|length != 1 }}</span>
+            </h1>
+            <p class="subtitle">Post announcements and notices</p>
+        </div>
+    </div>
+
+    <!-- Post Form -->
+    <div class="card">
+        <div class="section-title">Post a Notice</div>
+        <form action="/add_notice" method="post" enctype="multipart/form-data">
+
+            <label>Title</label>
+            <input type="text" name="title" placeholder="Notice title…" required>
+
+            <label>Message</label>
+            <textarea name="message" placeholder="Write your notice here…" required></textarea>
+
+            <div class="upload-row">
+                <label class="upload-label" style="margin-bottom:0;">
+                    <i class="ti ti-upload" style="font-size:16px;"></i>
+                    Upload poster
+                    <input type="file" name="poster" accept="image/*,.pdf" style="display:none;">
+                </label>
+                <span class="upload-hint">PNG, JPG or PDF · Max 5 MB</span>
+            </div>
+
+            <button type="submit" class="btn-primary">
+                <i class="ti ti-send" style="font-size:16px;"></i>
+                Post Notice
+            </button>
+
+        </form>
+    </div>
+
+    <!-- Notices List -->
+    <div class="notices">
+        {% for n in data %}
+        <div class="menu-item">
+
+            <div class="icon-wrap" style="background:#EEEDFE;">
+                <i class="ti ti-speakerphone" style="font-size:20px; color:#534AB7;"></i>
+            </div>
+
+            <div class="notice-meta">
+
+                {% if n[3] %}
+                <img class="notice-img"
+                     src="{{ url_for('notice_image', filename=n[3]) }}"
+                     alt="Notice poster">
+                {% endif %}
+
+                <p class="notice-title">{{ n[1] }}</p>
+                <p class="notice-msg">{{ n[2] }}</p>
+
+                <div class="notice-footer">
+                    <span class="notice-date">
+                        <i class="ti ti-calendar" style="font-size:13px;"></i>
+                        {{ n[4] if n[4] else '' }}
+                    </span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="notice-tag">General</span>
+                        <form action="/delete_notice/{{ n[0] }}" method="post"
+                              onsubmit="return confirm('Delete this notice?');" style="margin:0;">
+                            <button type="submit" class="btn-delete">
+                                <i class="ti ti-trash" style="font-size:13px;"></i>
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="/dashboard" class="back-btn">
+        <i class="ti ti-arrow-left" style="font-size:14px;"></i>
+        Back to Dashboard
+    </a>
+
+</div>
+
+</body>
+</html>
